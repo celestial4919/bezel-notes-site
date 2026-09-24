@@ -1,0 +1,703 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Bezel Notes — your notes, one edge away. A quiet desktop sticky-note app built for focus.">
+  <meta name="theme-color" content="#07090b">
+  <title>Bezel Notes — Your notes. One edge away.</title>
+  <link rel="icon" type="image/png" href="./assets/bezel-logo.png">
+  <link rel="stylesheet" href="./styles.css">
+  <style>
+    .hero-platform-picker {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }
+
+    .platform-label {
+      font-size: 9px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #8f98a3;
+      white-space: nowrap;
+    }
+
+    .platform-options {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .platform-option {
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.03);
+      color: #d9dee5;
+      padding: 7px 9px;
+      font: inherit;
+      font-size: 10px;
+      cursor: pointer;
+      transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+    }
+
+    .platform-option:hover,
+    .platform-option.active {
+      border-color: rgba(255, 255, 255, 0.3);
+      background: rgba(255, 255, 255, 0.08);
+      color: #ffffff;
+    }
+
+    .hero-platform-status {
+      font-size: 9px;
+      color: #8f98a3;
+      white-space: nowrap;
+    }
+
+    /* Real Bezel Notes card styling mirrored from +page.svelte. */
+    .demo-note {
+      border: 0;
+      border-radius: 0;
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      box-sizing: border-box;
+      width: 220px;
+      min-height: 160px;
+      height: 160px;
+      align-self: center;
+      position: relative;
+      margin-top: -20px;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      box-shadow:
+        3px 4px 8px rgba(0, 0, 0, 0.12),
+        0 1px 2px rgba(0, 0, 0, 0.08);
+      color: #1f2937;
+    }
+
+    .demo-note:first-of-type {
+      /* Match the real app: top-bar margin-bottom (12px) +
+         notes-feed padding-top (6px) = 18px before the first note. */
+      margin-top: 18px;
+    }
+
+    .demo-note:hover {
+      transform: translateY(-2px);
+    }
+
+    .demo-note-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .mini-logo {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      margin-top: -3px;
+    }
+
+    .mini-logo i {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: block;
+    }
+
+    .demo-actions {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+    }
+
+    .demo-actions button {
+      background: none;
+      border: none;
+      box-shadow: none;
+      cursor: pointer;
+      padding: 2px;
+    }
+
+    .demo-icon-btn {
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: inherit;
+    }
+
+    .demo-icon-btn svg {
+      width: 14px;
+      height: 14px;
+      fill: currentColor;
+      stroke: currentColor;
+      stroke-width: 1.6;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .demo-palette-btn {
+      width: 25px;
+      height: 25px;
+    }
+
+    .demo-palette-btn svg {
+      width: 17px;
+      height: 17px;
+      margin-top: -5px;
+    }
+
+    .demo-pin-btn {
+      color: #9ca3af;
+    }
+
+    .demo-delete-btn svg {
+      fill: none;
+      stroke-width: 2;
+    }
+
+    .demo-note-text-wrapper {
+      position: relative;
+      flex: 1;
+      display: flex;
+      min-height: 0;
+    }
+
+    .demo-note-text {
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      flex: 1;
+      width: 100%;
+      box-sizing: border-box;
+      font-size: 13px;
+      line-height: 1.3;
+      color: #1f2937;
+      font-family: inherit;
+      margin: 4px 0;
+    }
+
+    .demo-note-footer {
+      font-size: 10px;
+      font-style: italic;
+      text-align: right;
+      margin-top: auto;
+    }
+
+    .platform-status {
+      display: block;
+      margin-top: 8px;
+      font-size: 9px;
+      color: #7f8a98;
+    }
+  </style>
+</head>
+<body>
+  <div class="ambient ambient-a"></div>
+  <div class="ambient ambient-b"></div>
+
+  <header class="site-header shell">
+    <a href="#top" class="brand" aria-label="Bezel Notes home">
+      <img src="./assets/bezel-logo.png" alt="Bezel Notes logo">
+      <span>BEZEL NOTES</span>
+    </a>
+
+    <nav>
+      <a href="#features">Features</a>
+      <a href="#how">How it works</a>
+      <a href="#pricing">Pricing</a>
+      <a class="nav-cta" href="#pricing">Get Bezel Notes</a>
+    </nav>
+  </header>
+
+  <main id="top">
+    <section class="hero shell">
+      <div class="hero-copy">
+        <div class="kicker">
+          <span class="kicker-dot"></span>
+          Desktop app · Windows · macOS · Linux
+        </div>
+
+        <h1>
+          Your notes.<br>
+          <span>One edge away.</span>
+        </h1>
+
+        <p class="hero-lede">
+          A quiet sticky-note workspace that lives at the edge of your screen.
+          Capture the thought, pin what matters, and get straight back to work.
+        </p>
+
+        <div class="hero-actions">
+          <button class="button button-primary" data-buy>
+            Get Bezel Notes — $5.99
+          </button>
+
+          <a
+            class="button button-ghost"
+            href="https://github.com/celestial4919/bezel-notes/releases/latest"
+            target="_blank"
+            rel="noopener"
+          >
+            View latest build
+          </a>
+        </div>
+
+        <div class="hero-platform-picker" aria-label="Choose your platform">
+          <span class="platform-label">Get it for</span>
+          <div class="platform-options" role="group" aria-label="Platform options">
+            <button class="platform-option active" type="button" data-platform="windows">Windows</button>
+            <button class="platform-option" type="button" data-platform="macos">macOS</button>
+            <button class="platform-option" type="button" data-platform="linux">Linux</button>
+          </div>
+          <small class="hero-platform-status" data-platform-status>Windows build · ready</small>
+        </div>
+
+        <div class="hero-trust">
+          <span>One-time purchase</span>
+          <span>•</span>
+          <span>Lifetime license</span>
+          <span>•</span>
+          <span>Signed updates</span>
+        </div>
+      </div>
+
+      <div class="hero-product">
+        <div class="product-glow"></div>
+
+        <div class="desktop-frame">
+          <div class="frame-top">
+            <span></span>
+            <span></span>
+            <span></span>
+            <small>11:09 PM</small>
+          </div>
+
+          <div class="desktop-surface">
+            <div class="desktop-copy">
+              <small>WORKSPACE</small>
+              <strong>Stay in flow.</strong>
+              <p>
+                Bezel appears when you need it — and disappears when you don't.
+              </p>
+            </div>
+
+            <div class="edge-panel">
+              <div class="panel-inner">
+
+                <button class="demo-add" aria-hidden="true">+</button>
+
+                <div class="demo-search" style="width:190px; margin:0 auto;">
+                  <span>Search notes...</span>
+                  <b>⌕</b>
+                </div>
+
+                <article
+                  class="demo-note note-yellow"
+                  style="background:#fef08a;z-index:3;--note-accent:#ca8a04;"
+                >
+                  <div class="demo-note-top">
+                    <span class="mini-logo" aria-hidden="true" style="color:#ca8a04;">
+                      <i style="background:currentColor;"></i>
+                      <i style="background:currentColor;"></i>
+                      <i style="background:currentColor;"></i>
+                    </span>
+
+                    <span class="demo-actions" aria-hidden="true" style="color:#ca8a04;">
+                      <b class="demo-icon-btn demo-palette-btn" aria-hidden="true">
+                        <svg viewBox="0 0 24 24">
+                          <path d="M8 5 l3.54 3.54 a5 5 0 1 1 -7.07 0 Z" fill="currentColor" opacity="0.55"></path>
+                          <path d="M15 4 l4.6 4.6 a6.5 6.5 0 1 1 -9.19 0 Z" fill="currentColor"></path>
+                        </svg>
+                      </b>
+                      <b class="demo-icon-btn demo-pin-btn" aria-hidden="true">
+                        <svg viewBox="0 0 24 24">
+                          <path d="M8 3h8l-1 6 3 3v2h-5v7l-1 1-1-1v-7H6v-2l3-3-1-6Z"></path>
+                        </svg>
+                      </b>
+                      <b class="demo-icon-btn demo-delete-btn" aria-hidden="true">
+                        <svg viewBox="0 0 24 24">
+                          <path d="M7 7l10 10M17 7L7 17"></path>
+                        </svg>
+                      </b>
+                    </span>
+                  </div>
+
+                  <div class="demo-note-text-wrapper">
+                    <p class="demo-note-text">
+                      Remember the idea before it disappears.
+                    </p>
+                  </div>
+
+                  <footer class="demo-note-footer" style="color:#ca8a04;">
+                    Sep 21 · 11:02 PM
+                  </footer>
+                </article>
+
+                <article
+                  class="demo-note note-blue"
+                  style="background:#bae6fd;z-index:2;--note-accent:#0284c7;"
+                >
+                  <div class="demo-note-top">
+                    <span class="mini-logo" aria-hidden="true" style="color:#0284c7;">
+                      <i style="background:currentColor;"></i>
+                      <i style="background:currentColor;"></i>
+                      <i style="background:currentColor;"></i>
+                    </span>
+
+                    <span class="demo-actions" aria-hidden="true" style="color:#0284c7;">
+                      <b class="demo-icon-btn demo-palette-btn" aria-hidden="true">
+                        <svg viewBox="0 0 24 24">
+                          <path d="M8 5 l3.54 3.54 a5 5 0 1 1 -7.07 0 Z" fill="currentColor" opacity="0.55"></path>
+                          <path d="M15 4 l4.6 4.6 a6.5 6.5 0 1 1 -9.19 0 Z" fill="currentColor"></path>
+                        </svg>
+                      </b>
+                      <b class="demo-icon-btn demo-pin-btn" aria-hidden="true">
+                        <svg viewBox="0 0 24 24">
+                          <path d="M8 3h8l-1 6 3 3v2h-5v7l-1 1-1-1v-7H6v-2l3-3-1-6Z"></path>
+                        </svg>
+                      </b>
+                      <b class="demo-icon-btn demo-delete-btn" aria-hidden="true">
+                        <svg viewBox="0 0 24 24">
+                          <path d="M7 7l10 10M17 7L7 17"></path>
+                        </svg>
+                      </b>
+                    </span>
+                  </div>
+
+                  <div class="demo-note-text-wrapper">
+                    <p class="demo-note-text">
+                      Ship the first version. Learn from the users.
+                    </p>
+                  </div>
+
+                  <footer class="demo-note-footer" style="color:#0284c7;">
+                    Sep 21 · 10:41 PM
+                  </footer>
+                </article>
+
+                <article
+                  class="demo-note note-green"
+                  style="background:#bbf7d0;z-index:1;--note-accent:#16a34a;"
+                >
+                  <div class="demo-note-top">
+                    <span class="mini-logo" aria-hidden="true" style="color:#16a34a;">
+                      <i style="background:currentColor;"></i>
+                      <i style="background:currentColor;"></i>
+                      <i style="background:currentColor;"></i>
+                    </span>
+
+                    <span class="demo-actions" aria-hidden="true" style="color:#16a34a;">
+                      <b class="demo-icon-btn demo-palette-btn" aria-hidden="true">
+                        <svg viewBox="0 0 24 24">
+                          <path d="M8 5 l3.54 3.54 a5 5 0 1 1 -7.07 0 Z" fill="currentColor" opacity="0.55"></path>
+                          <path d="M15 4 l4.6 4.6 a6.5 6.5 0 1 1 -9.19 0 Z" fill="currentColor"></path>
+                        </svg>
+                      </b>
+                      <b class="demo-icon-btn demo-pin-btn" aria-hidden="true">
+                        <svg viewBox="0 0 24 24">
+                          <path d="M8 3h8l-1 6 3 3v2h-5v7l-1 1-1-1v-7H6v-2l3-3-1-6Z"></path>
+                        </svg>
+                      </b>
+                      <b class="demo-icon-btn demo-delete-btn" aria-hidden="true">
+                        <svg viewBox="0 0 24 24">
+                          <path d="M7 7l10 10M17 7L7 17"></path>
+                        </svg>
+                      </b>
+                    </span>
+                  </div>
+
+                  <div class="demo-note-text-wrapper">
+                    <p class="demo-note-text">
+                      Build quietly. Let the product speak for itself.
+                    </p>
+                  </div>
+
+                  <footer class="demo-note-footer" style="color:#16a34a;">
+                    Sep 21 · 09:56 PM
+                  </footer>
+                </article>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="edge-tab">BEZEL</div>
+      </div>
+    </section>
+
+    <section class="brand-strip shell" aria-label="Bezel Notes highlights">
+      <div>
+        <strong>Always nearby</strong>
+        <span>Trigger it from the edge.</span>
+      </div>
+
+      <div>
+        <strong>Built for focus</strong>
+        <span>No extra window to manage.</span>
+      </div>
+
+      <div>
+        <strong>Persistent</strong>
+        <span>Your notes survive restarts.</span>
+      </div>
+
+      <div>
+        <strong>Seamless updates</strong>
+        <span>Keep working as Bezel evolves.</span>
+      </div>
+    </section>
+
+    <section class="section shell" id="features">
+      <div class="section-intro">
+        <div class="eyebrow">WHY BEZEL</div>
+
+        <h2>
+          Designed around the moment<br>
+          <span>you need a note.</span>
+        </h2>
+
+        <p>
+          Not a giant workspace. Not another tab.
+          Just a small, fast place for thoughts that need to stay close.
+        </p>
+      </div>
+
+      <div class="feature-grid">
+        <article>
+          <span class="feature-index">01</span>
+          <h3>Edge-first</h3>
+          <p>
+            Bring the panel in from the edge of your screen instead of
+            launching another workflow.
+          </p>
+        </article>
+
+        <article>
+          <span class="feature-index">02</span>
+          <h3>Sticky by design</h3>
+          <p>
+            Pin important notes, stack ideas, and use color to separate
+            what deserves attention.
+          </p>
+        </article>
+
+        <article>
+          <span class="feature-index">03</span>
+          <h3>Searchable memory</h3>
+          <p>
+            When your notes pile up, search gets you back to the right
+            thought quickly.
+          </p>
+        </article>
+
+        <article>
+          <span class="feature-index">04</span>
+          <h3>Quietly persistent</h3>
+          <p>
+            Restart Windows and come back later — your notes remain
+            where you left them.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section shell how-section" id="how">
+      <div class="section-intro">
+        <div class="eyebrow">THE EXPERIENCE</div>
+
+        <h2>
+          Three moves.<br>
+          <span>No detour.</span>
+        </h2>
+      </div>
+
+      <div class="steps">
+        <div class="step">
+          <span>01</span>
+          <div>
+            <h3>Move to the edge.</h3>
+            <p>
+              The panel appears without pulling you out of your current workflow.
+            </p>
+          </div>
+        </div>
+
+        <div class="step">
+          <span>02</span>
+          <div>
+            <h3>Write it down.</h3>
+            <p>
+              Capture the thought, pin it, change its color, or leave it alone.
+            </p>
+          </div>
+        </div>
+
+        <div class="step">
+          <span>03</span>
+          <div>
+            <h3>Keep moving.</h3>
+            <p>
+              Bezel retreats. Your note stays ready for the next time you need it.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="pricing shell" id="pricing">
+      <div class="pricing-logo">
+        <img src="./assets/bezel-logo.png" alt="Bezel Notes">
+      </div>
+
+      <div class="pricing-copy">
+        <div class="eyebrow">BEZEL NOTES · LIFETIME</div>
+
+        <h2>
+          Buy once.<br>
+          <span>Keep the edge.</span>
+        </h2>
+
+        <p>
+          One Bezel Notes license for the full desktop experience.
+          No subscription and no recurring bill.
+        </p>
+      </div>
+
+      <div class="pricing-buy">
+        <div class="price">
+          <sup>$</sup>5.99
+        </div>
+
+        <div class="price-note">
+          one-time · lifetime license
+        </div>
+
+        <button class="button button-primary button-full" data-buy>
+          Buy Bezel Notes
+        </button>
+
+        <a
+          class="button button-ghost button-full"
+          href="https://github.com/celestial4919/bezel-notes/releases/latest"
+          target="_blank"
+          rel="noopener"
+        >
+          Download latest build
+        </a>
+
+        <small class="secure-note">
+          Secure checkout powered by Paddle.
+        </small>
+      </div>
+    </section>
+
+    <section class="section shell faq" id="faq">
+      <div class="section-intro">
+        <div class="eyebrow">FAQ</div>
+        <h2>Simple on purpose.</h2>
+      </div>
+
+      <div class="faq-list">
+        <details>
+          <summary>Is Bezel Notes a subscription?</summary>
+          <p>
+            No. The launch offer is a one-time $5.99 lifetime license.
+          </p>
+        </details>
+
+        <details>
+          <summary>What does the purchase include?</summary>
+          <p>
+            The Bezel Notes desktop application for the platform you select,
+            lifetime access to the licensed product, and signed in-app updates.
+          </p>
+        </details>
+
+        <details>
+          <summary>Where does it run?</summary>
+          <p>
+            The storefront is prepared for Windows, macOS, and Linux.
+            Platform-specific installers are added as each build is released.
+          </p>
+        </details>
+
+        <details>
+          <summary>How do updates work?</summary>
+          <p>
+            After installation, Bezel Notes can discover signed releases from
+            inside the app so you don't have to hunt for installers.
+          </p>
+        </details>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer shell">
+    <div class="footer-brand">
+      <img src="./assets/bezel-logo.png" alt="">
+      <span>BEZEL NOTES</span>
+    </div>
+
+    <div class="footer-links">
+      <a href="#pricing">Purchase</a>
+
+      <a
+        href="https://github.com/celestial4919/bezel-notes"
+        target="_blank"
+        rel="noopener"
+      >
+        GitHub
+      </a>
+
+      <a
+        href="https://github.com/celestial4919/bezel-notes/releases/latest"
+        target="_blank"
+        rel="noopener"
+      >
+        Releases
+      </a>
+    </div>
+
+    <div class="copyright">
+      © 2026 Celestial Forge
+    </div>
+  </footer>
+
+  <div
+    class="toast"
+    id="toast"
+    role="status"
+    aria-live="polite"
+  ></div>
+
+  <script>
+    document.querySelectorAll('[data-platform]').forEach((button) => {
+      button.addEventListener('click', () => {
+        document.querySelectorAll('[data-platform]').forEach((item) => {
+          item.classList.toggle('active', item === button);
+        });
+
+        const platform = button.getAttribute('data-platform');
+        const status = document.querySelector('[data-platform-status]');
+        if (!status) return;
+
+        if (platform === 'windows') {
+          status.textContent = 'Windows build · ready';
+        } else if (platform === 'macos') {
+          status.textContent = 'macOS build · coming soon';
+        } else {
+          status.textContent = 'Linux build · coming soon';
+        }
+      });
+    });
+  </script>
+
+  <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
+  <script src="./config.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>
